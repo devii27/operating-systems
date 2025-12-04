@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <string.h>
+
+int main() {
+    int shmid;
+    char *shm_ptr;
+
+    // Create unique key
+    key_t key = ftok("shmfile", 65);
+
+    // Create shared memory segment (size = 1024 bytes)
+    shmid = shmget(key, 1024, 0666 | IPC_CREAT);
+
+    if (shmid < 0) {
+        perror("shmget");
+        return 1;
+    }
+
+    // Attach to the shared memory
+    shm_ptr = (char*) shmat(shmid, NULL, 0);
+
+    if (shm_ptr == (char*) -1) {
+        perror("shmat");
+        return 1;
+    }
+
+    // Create child process
+    if (fork() == 0) {
+        // ----- CHILD PROCESS (Reader) -----
+        sleep(1);  // allow parent to write
+
+        printf("Child Process Reading from Shared Memory:\n");
+        printf("Message: %s\n", shm_ptr);
+
+        // Detach
+        shmdt(shm_ptr);
+    } 
+    else {
+        // ----- PARENT PROCESS (Writer) -----
+        char msg[] = "Hello from Parent using Shared Memory!";
+        printf("Parent Process Writing to Shared Memory...\n");
+
+        strcpy(shm_ptr, msg);
+
+        wait(NULL);  // wait for child
+
+        // Detach and remove shared memory
+        shmdt(shm_ptr);
+        shmctl(shmid, IPC_RMID, NULL);
+    }
+
+    return 0;
+}
