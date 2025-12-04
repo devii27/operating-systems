@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+int main() {
+    int n, i, j;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    int pid[n], at[n], bt[n];
+    int ct[n], tat[n], wt[n], completed[n];
+    int time = 0, completedCount = 0;
+
+    // Input process data
+    for (i = 0; i < n; i++) {
+        pid[i] = i + 1;
+        printf("\nEnter arrival time of P%d: ", i + 1);
+        scanf("%d", &at[i]);
+        printf("Enter burst time of P%d: ", i + 1);
+        scanf("%d", &bt[i]);
+        completed[i] = 0;
+    }
+
+    while (completedCount < n) {
+        int idx = -1;
+        int min_bt = 9999;
+
+        // Select process with shortest burst time among arrived & not completed
+        for (i = 0; i < n; i++) {
+            if (at[i] <= time && completed[i] == 0) {
+                if (bt[i] < min_bt) {
+                    min_bt = bt[i];
+                    idx = i;
+                }
+            }
+        }
+
+        // If no process has arrived yet, increment time
+        if (idx == -1) {
+            time++;
+            continue;
+        }
+
+        // Execute selected process
+        time += bt[idx];
+        ct[idx] = time;       // Completion time
+        tat[idx] = ct[idx] - at[idx]; // Turnaround time
+        wt[idx] = tat[idx] - bt[idx]; // Waiting time
+        completed[idx] = 1;
+        completedCount++;
+    }
+
+    // Output results
+    printf("\nProcess\tAT\tBT\tCT\tTAT\tWT\n");
+    for (i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
+               pid[i], at[i], bt[i], ct[i], tat[i], wt[i]);
+    }
+
+    // Averages
+    float avgWT = 0, avgTAT = 0;
+    for (i = 0; i < n; i++) {
+        avgWT += wt[i];
+        avgTAT += tat[i];
+    }
+    avgWT /= n;
+    avgTAT /= n;
+
+    printf("\nAverage Waiting Time: %.2f", avgWT);
+    printf("\nAverage Turnaround Time: %.2f\n", avgTAT);
+
+    return 0;
+}
