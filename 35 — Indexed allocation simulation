@@ -1,0 +1,12 @@
+/* indexed_alloc.c */
+#include <stdio.h>
+
+int main(){
+    int index_block[10] = {15,16,20,21,50,51,52, -1, -1, -1}; /* -1 unused */
+    int logical_i = 4; /* 5th block of file */
+    if(index_block[logical_i] != -1)
+        printf("Logical %d -> Physical %d\n", logical_i, index_block[logical_i]);
+    else
+        puts("No such block");
+    return 0;
+}
