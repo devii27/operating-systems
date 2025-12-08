@@ -1,0 +1,32 @@
+/* file_ops.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(){
+    FILE *fp;
+    /* create & write */
+    fp = fopen("file1.txt","w");
+    fprintf(fp,"Hello file management\n");
+    fclose(fp);
+
+    /* append */
+    fp = fopen("file1.txt","a");
+    fprintf(fp,"Appended line\n");
+    fclose(fp);
+
+    /* read */
+    fp = fopen("file1.txt","r");
+    char buf[128];
+    puts("Contents of file1.txt:");
+    while(fgets(buf,sizeof(buf),fp)) fputs(buf, stdout);
+    fclose(fp);
+
+    /* rename */
+    if(rename("file1.txt","file2.txt")==0) puts("\nRenamed to file2.txt");
+
+    /* delete */
+    if(remove("file2.txt")==0) puts("Deleted file2.txt");
+
+    return 0;
+}
