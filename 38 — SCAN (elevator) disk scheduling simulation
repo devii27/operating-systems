@@ -1,0 +1,28 @@
+/* scan_disk.c */
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+    int head = 50;
+    int req[] = {95,180,34,119,11,123,62,64};
+    int n = sizeof(req)/sizeof(req[0]);
+    int disk_size = 199;
+    /* split into left and right */
+    int left[20], right[20], l=0, r=0;
+    for(int i=0;i<n;i++){
+        if(req[i] < head) left[l++]=req[i];
+        else right[r++]=req[i];
+    }
+    /* sort left ascending and right ascending */
+    qsort(left, l, sizeof(int), (int(*)(const void*,const void*))strcmp); /* temporary trick */
+    /* safer: implement simple sorts */
+    for(int i=0;i<l-1;i++) for(int j=i+1;j<l;j++) if(left[i]>left[j]) { int t=left[i]; left[i]=left[j]; left[j]=t; }
+    for(int i=0;i<r-1;i++) for(int j=i+1;j<r;j++) if(right[i]>right[j]) { int t=right[i]; right[i]=t; right[j]=t; }
+    int dist=0;
+    /* go right first */
+    for(int i=0;i<r;i++){ dist += abs(head - right[i]); head = right[i]; }
+    dist += abs(head - disk_size); head = disk_size;
+    for(int i=l-1;i>=0;i--){ dist += abs(head - left[i]); head = left[i]; }
+    printf("SCAN total head movement = %d\n", dist);
+    return 0;
+}
