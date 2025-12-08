@@ -1,0 +1,25 @@
+/* unix_file_calls.c */
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+int main(){
+    const char *fn="demo.txt";
+    int fd = open(fn, O_CREAT | O_RDWR, 0644);
+    write(fd, "Hello\n", 6);
+    lseek(fd, 0, SEEK_SET);
+    char buf[32]; int n = read(fd, buf, sizeof(buf)-1);
+    buf[n]=0; printf("Read: %s", buf);
+    close(fd);
+
+    struct stat st;
+    if(stat(fn, &st)==0){
+        printf("Size: %ld bytes\n", st.st_size);
+    }
+
+    mkdir("mydir", 0755);
+    unlink(fn); /* delete file */
+    rmdir("mydir");
+    return 0;
+}
