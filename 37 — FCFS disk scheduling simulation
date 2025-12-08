@@ -1,0 +1,15 @@
+/* fcfs_disk.c */
+#include <stdio.h>
+
+int main(){
+    int head = 50;
+    int req[] = {95,180,34,119,11,123,62,64};
+    int n = sizeof(req)/sizeof(req[0]);
+    int dist=0;
+    for(int i=0;i<n;i++){
+        dist += abs(head - req[i]);
+        head = req[i];
+    }
+    printf("FCFS total head movement = %d\n", dist);
+    return 0;
+}
