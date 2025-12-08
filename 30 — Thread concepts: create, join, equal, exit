@@ -1,0 +1,21 @@
+/* thread_concepts.c */
+#include <stdio.h>
+#include <pthread.h>
+
+void *worker(void *arg){
+    printf("Worker started\n");
+    pthread_exit((void*) (intptr_t) 42); /* exit with code 42 */
+}
+
+int main(){
+    pthread_t t;
+    pthread_create(&t, NULL, worker, NULL);
+    void *res;
+    pthread_join(t, &res);
+    printf("Joined; return value = %d\n", (int)(intptr_t)res);
+
+    /* equal example: compare main thread and worker thread id */
+    pthread_t main_tid = pthread_self();
+    printf("Are main and worker equal? %s\n", pthread_equal(main_tid, t) ? "Yes" : "No");
+    return 0;
+}
