@@ -1,0 +1,11 @@
+/* contiguous_alloc.c */
+#include <stdio.h>
+
+int main(){
+    int disk_blocks = 100;
+    int file_start = 10, file_len = 8; /* file occupies blocks 10..17 */
+    int access_index = 5; /* to access 5th record */
+    int physical_block = file_start + access_index; /* direct mapping */
+    printf("Accessing logical record %d -> physical block %d\n", access_index, physical_block);
+    return 0;
+}
