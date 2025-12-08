@@ -1,0 +1,37 @@
+/* emp_random_access.c */
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[30];
+    double salary;
+} Emp;
+
+const char *F = "employees.bin";
+
+void add_emp(Emp e){
+    FILE *fp = fopen(F,"ab");
+    fwrite(&e, sizeof(Emp), 1, fp);
+    fclose(fp);
+}
+void read_emp(int index){
+    FILE *fp = fopen(F,"rb");
+    fseek(fp, index * sizeof(Emp), SEEK_SET);
+    Emp e;
+    if(fread(&e,sizeof(Emp),1,fp)==1)
+        printf("id=%d name=%s salary=%.2f\n", e.id, e.name, e.salary);
+    else
+        puts("No record");
+    fclose(fp);
+}
+
+int main(){
+    Emp e1 = {1, "Alice", 50000}, e2 = {2, "Bob", 60000};
+    add_emp(e1); add_emp(e2);
+    puts("Record at index 0:");
+    read_emp(0);
+    puts("Record at index 1:");
+    read_emp(1);
+    return 0;
+}
