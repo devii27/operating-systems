@@ -1,0 +1,18 @@
+/* linked_alloc.c */
+#include <stdio.h>
+
+typedef struct Block { int data; int next; } Block;
+
+int main(){
+    Block disk[100];
+    /* create a file with blocks 5 -> 8 -> 2 -> -1 */
+    disk[5].data = 111; disk[5].next = 8;
+    disk[8].data = 222; disk[8].next = 2;
+    disk[2].data = 333; disk[2].next = -1;
+    int head = 5;
+    printf("Linked file blocks and data:\n");
+    for(int cur=head; cur!=-1; cur=disk[cur].next){
+        printf("Block %d: data=%d\n", cur, disk[cur].data);
+    }
+    return 0;
+}
