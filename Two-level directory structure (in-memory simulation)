@@ -1,0 +1,52 @@
+/* two_level_dir.c */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_DIRS 10
+#define MAX_FILES 20
+#define NAME_LEN 32
+
+typedef struct {
+    char name[NAME_LEN];
+    char files[MAX_FILES][NAME_LEN];
+    int file_count;
+} Dir;
+
+Dir root[MAX_DIRS];
+int dir_count = 0;
+
+void add_dir(const char *d) {
+    if(dir_count==MAX_DIRS) { puts("dir limit"); return;}
+    strcpy(root[dir_count].name, d);
+    root[dir_count].file_count = 0;
+    dir_count++;
+}
+void add_file(const char *d, const char *f) {
+    for(int i=0;i<dir_count;i++){
+        if(strcmp(root[i].name,d)==0){
+            if(root[i].file_count==MAX_FILES){ puts("file limit"); return;}
+            strcpy(root[i].files[root[i].file_count++], f);
+            return;
+        }
+    }
+    puts("dir not found");
+}
+void list_all(){
+    for(int i=0;i<dir_count;i++){
+        printf("Directory: %s\n", root[i].name);
+        for(int j=0;j<root[i].file_count;j++)
+            printf("  %s\n", root[i].files[j]);
+    }
+}
+
+int main(){
+    add_dir("deptA");
+    add_dir("deptB");
+    add_file("deptA","file1.txt");
+    add_file("deptA","notes.doc");
+    add_file("deptB","image.png");
+    puts("Two-level directory listing:");
+    list_all();
+    return 0;
+}
