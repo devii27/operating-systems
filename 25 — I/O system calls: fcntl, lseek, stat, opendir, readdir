@@ -1,0 +1,41 @@
+/* io_syscalls.c */
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+int main(){
+    const char *fn="io_demo.txt";
+    int fd = open(fn, O_CREAT|O_RDWR, 0644);
+    write(fd, "abcde", 5);
+
+    /* fcntl: set non-blocking flag as sample */
+    int flags = fcntl(fd, F_GETFL);
+    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    printf("Set O_NONBLOCK on %s\n", fn);
+
+    /* lseek */
+    lseek(fd, 2, SEEK_SET);
+    char c;
+    read(fd, &c, 1);
+    printf("Char at pos 2: %c\n", c);
+
+    /* stat */
+    struct stat st;
+    stat(fn, &st);
+    printf("Size: %ld\n", st.st_size);
+
+    close(fd);
+
+    /* opendir / readdir */
+    DIR *d = opendir(".");
+    struct dirent *ent;
+    printf("Files in current dir:\n");
+    while((ent = readdir(d)) != NULL){
+        printf(" %s\n", ent->d_name);
+    }
+    closedir(d);
+
+    return 0;
+}
