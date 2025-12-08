@@ -1,0 +1,41 @@
+/* bankers.c */
+#include <stdio.h>
+#include <stdbool.h>
+
+#define P 5 /* processes */
+#define R 3 /* resources */
+
+int main(){
+    int alloc[P][R] = { {0,1,0},{2,0,0},{3,0,2},{2,1,1},{0,0,2} };
+    int maxm[P][R]  = { {7,5,3},{3,2,2},{9,0,2},{2,2,2},{4,3,3} };
+    int avail[R]    = {3,3,2};
+    int need[P][R];
+    for(int i=0;i<P;i++)
+      for(int j=0;j<R;j++) need[i][j]=maxm[i][j]-alloc[i][j];
+
+    bool finish[P]; for(int i=0;i<P;i++) finish[i]=false;
+    int safeSeq[P], idx=0;
+
+    for(int count=0; count<P; ){
+        bool found=false;
+        for(int p=0;p<P;p++){
+            if(!finish[p]){
+                int j; for(j=0;j<R;j++) if(need[p][j] > avail[j]) break;
+                if(j==R){
+                    for(int k=0;k<R;k++) avail[k]+=alloc[p][k];
+                    safeSeq[idx++]=p;
+                    finish[p]=true;
+                    found=true;
+                    count++;
+                }
+            }
+        }
+        if(!found) break;
+    }
+
+    for(int i=0;i<P;i++) if(!finish[i]) { puts("System is NOT in safe state"); return 0; }
+    printf("System is in safe state. Safe sequence: ");
+    for(int i=0;i<P;i++) printf("%d ", safeSeq[i]);
+    puts("");
+    return 0;
+}
