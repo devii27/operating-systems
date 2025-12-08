@@ -1,0 +1,25 @@
+/* best_fit.c */
+#include <stdio.h>
+
+int main(){
+    int holes[] = {100, 500, 200, 300, 600};
+    int procs[] = {212, 417, 112, 426};
+    int H = sizeof(holes)/sizeof(holes[0]);
+    int P = sizeof(procs)/sizeof(procs[0]);
+    int alloc[P]; for(int i=0;i<P;i++) alloc[i]=-1;
+
+    for(int i=0;i<P;i++){
+        int best = -1;
+        for(int j=0;j<H;j++){
+            if(holes[j] >= procs[i]){
+                if(best==-1 || holes[j] < holes[best]) best=j;
+            }
+        }
+        if(best!=-1){ alloc[i]=best; holes[best]-=procs[i]; }
+    }
+    for(int i=0;i<P;i++){
+        if(alloc[i]!=-1) printf("Proc %d allocated to hole %d\n", i, alloc[i]);
+        else printf("Proc %d not allocated\n", i);
+    }
+    return 0;
+}
