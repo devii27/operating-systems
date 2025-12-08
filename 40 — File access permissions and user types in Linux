@@ -1,0 +1,29 @@
+/* file_permissions.c */
+#include <stdio.h>
+#include <sys/stat.h>
+
+void show_perms(mode_t m){
+    printf( (m & S_IRUSR)? "r": "-");
+    printf( (m & S_IWUSR)? "w": "-");
+    printf( (m & S_IXUSR)? "x": "-");
+    printf( (m & S_IRGRP)? "r": "-");
+    printf( (m & S_IWGRP)? "w": "-");
+    printf( (m & S_IXGRP)? "x": "-");
+    printf( (m & S_IROTH)? "r": "-");
+    printf( (m & S_IWOTH)? "w": "-");
+    printf( (m & S_IXOTH)? "x": "-");
+    printf("\n");
+}
+
+int main(int argc, char *argv[]){
+    const char *fn = (argc>1)? argv[1] : "file_permissions.c";
+    struct stat st;
+    if(stat(fn, &st)!=0){ perror("stat"); return 1; }
+    printf("Permissions for %s: ", fn); show_perms(st.st_mode);
+    puts("\nUser types in Linux (examples):");
+    puts(" - Owner (user who owns the file) : first triplet (rwx)");
+    puts(" - Group (users in owner's group) : second triplet (rwx)");
+    puts(" - Others (everyone else)         : third triplet (rwx)");
+    puts("\nUse chmod to change permissions, chown to change owner, chgrp to change group.");
+    return 0;
+}
