@@ -1,0 +1,21 @@
+/* fifo_paging.c */
+#include <stdio.h>
+#define FRAMES 3
+
+int main(){
+    int ref[] = {7,0,1,2,0,3,0,4,2,3,0,3,2};
+    int n = sizeof(ref)/sizeof(ref[0]);
+    int frames[FRAMES]; for(int i=0;i<FRAMES;i++) frames[i]=-1;
+    int ptr=0, faults=0;
+    for(int i=0;i<n;i++){
+        int found=0;
+        for(int j=0;j<FRAMES;j++) if(frames[j]==ref[i]) found=1;
+        if(!found){
+            frames[ptr]=ref[i];
+            ptr = (ptr+1)%FRAMES;
+            faults++;
+        }
+    }
+    printf("FIFO page faults = %d\n", faults);
+    return 0;
+}
