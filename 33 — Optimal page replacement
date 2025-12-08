@@ -1,0 +1,34 @@
+/* optimal_paging.c */
+#include <stdio.h>
+#include <limits.h>
+#define FRAMES 3
+
+int next_use(int ref[], int n, int idx, int page){
+    for(int i=idx+1;i<n;i++) if(ref[i]==page) return i;
+    return INT_MAX;
+}
+
+int main(){
+    int ref[] = {7,0,1,2,0,3,0,4,2,3,0,3,2};
+    int n = sizeof(ref)/sizeof(ref[0]);
+    int frames[FRAMES]; for(int i=0;i<FRAMES;i++) frames[i]=-1;
+    int faults=0;
+    for(int i=0;i<n;i++){
+        int page=ref[i], hit=0;
+        for(int j=0;j<FRAMES;j++) if(frames[j]==page) { hit=1; break; }
+        if(hit) continue;
+        /* if empty frame */
+        int placed=0;
+        for(int j=0;j<FRAMES;j++) if(frames[j]==-1){ frames[j]=page; placed=1; break; }
+        if(placed){ faults++; continue; }
+        /* choose page with farthest next use */
+        int far= -1, faridx=-1;
+        for(int j=0;j<FRAMES;j++){
+            int nu = next_use(ref,n,i,frames[j]);
+            if(nu > faridx){ faridx = nu; far = j; }
+        }
+        frames[far]=page; faults++;
+    }
+    printf("Optimal page faults = %d\n", faults);
+    return 0;
+}
